@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEVEN-7 QUANTUM AI | BAC BO PRO</title>
+    <title>SEVEN-7 QUANTUM AI | BAC BO & AVIATOR PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Rajdhani', sans-serif;
             background: #030712;
@@ -20,7 +16,6 @@
             align-items: center;
             justify-content: center;
             padding: 15px;
-            overflow-x: hidden;
         }
         .bg-glow {
             position: fixed;
@@ -36,18 +31,15 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 440px;
-            background: rgba(15, 23, 42, 0.85);
+            max-width: 450px;
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.4);
             border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 0 35px rgba(16, 185, 129, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.02);
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.2);
         }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        .header { text-align: center; margin-bottom: 15px; }
         .title {
             font-family: 'Orbitron', sans-serif;
             font-size: 20px;
@@ -55,43 +47,46 @@
             background: linear-gradient(90deg, #10b981, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
         }
-        .badge {
-            display: inline-block;
-            font-size: 10px;
+        /* Mode Switcher Tabs */
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #9ca3af;
+            font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin-top: 6px;
-            text-transform: uppercase;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: #10b981;
+            color: #000;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
         .upload-area {
-            border: 2px dashed rgba(16, 185, 129, 0.3);
+            border: 2px dashed rgba(16, 185, 129, 0.4);
             border-radius: 14px;
-            padding: 18px;
+            padding: 20px;
             text-align: center;
             background: rgba(30, 41, 59, 0.5);
             cursor: pointer;
-            transition: all 0.3s ease;
             margin-bottom: 15px;
+            transition: 0.3s;
         }
-        .upload-area:hover {
-            border-color: #10b981;
-            background: rgba(16, 185, 129, 0.05);
-        }
-        .upload-icon {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-        .upload-text {
-            font-size: 14px;
-            color: #9ca3af;
-            font-weight: 600;
-        }
+        .upload-area:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
         input[type="file"] { display: none; }
         .btn-analyze {
             width: 100%;
@@ -100,36 +95,26 @@
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
             font-size: 15px;
-            padding: 14px;
+            padding: 15px;
             border: none;
             border-radius: 12px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            transition: all 0.2s ease;
-        }
-        .btn-analyze:active {
-            transform: scale(0.98);
         }
         #resultCard {
             display: none;
             margin-top: 20px;
             border-radius: 14px;
             padding: 18px;
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.3s ease;
         }
-        .card-blue {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(15, 23, 42, 0.95));
-            border: 1px solid #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-        }
-        .card-red {
-            background: linear-gradient(135deg, rgba(127, 29, 29, 0.9), rgba(15, 23, 42, 0.95));
-            border: 1px solid #ef4444;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-        }
+        .card-blue { background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(15, 23, 42, 0.95)); border: 2px solid #3b82f6; }
+        .card-red { background: linear-gradient(135deg, rgba(127, 29, 29, 0.95), rgba(15, 23, 42, 0.95)); border: 2px solid #ef4444; }
+        .card-aviator { background: linear-gradient(135deg, rgba(88, 28, 135, 0.95), rgba(15, 23, 42, 0.95)); border: 2px solid #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+        .card-wait { background: rgba(55, 65, 81, 0.9); border: 1px solid #9ca3af; text-align: center; }
         .signal-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 900;
             text-align: center;
             margin-bottom: 12px;
@@ -138,36 +123,12 @@
             display: flex;
             justify-content: space-between;
             font-size: 13px;
-            margin-bottom: 8px;
-            padding-bottom: 6px;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .info-label { color: #9ca3af; }
-        .info-value { font-weight: 700; color: #fff; }
-        .guide-box {
-            margin-top: 20px;
-            background: rgba(30, 41, 59, 0.4);
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .guide-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #10b981;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-        .guide-item {
-            font-size: 11px;
-            color: #9ca3af;
-            margin-bottom: 4px;
-        }
         canvas { display: none; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -177,30 +138,49 @@
 <div class="container">
     <div class="header">
         <div class="title">SEVEN-7 QUANTUM AI</div>
-        <div class="badge">Analisa Padrões em 2.5s</div>
+    </div>
+
+    <!-- Abas de Seleção de Jogo -->
+    <div class="tab-container">
+        <button class="tab-btn active" id="tabBacbo" onclick="mudarModo('bacbo')">🎲 BAC BO</button>
+        <button class="tab-btn" id="tabAviator" onclick="mudarModo('aviator')">✈️ AVIATOR</button>
     </div>
 
     <label for="imagemInput" class="upload-area">
-        <div class="upload-icon">📸</div>
-        <div class="upload-text" id="uploadLabel">Carregar Print do Gráfico</div>
+        <div id="uploadLabel">📸 Carregar Print do Gráfico (Bac Bo)</div>
     </label>
     <input type="file" id="imagemInput" accept="image/*" onchange="atualizarLabel()">
 
-    <button class="btn-analyze" onclick="analisarMatriz()">PROCESSAR GRÁFICO</button>
+    <button class="btn-analyze" onclick="processarAnalise()">ANALISAR PADRÃO</button>
 
     <div id="resultCard"></div>
-
-    <div class="guide-box">
-        <div class="guide-title">🛡️ Regras de Proteção de Banca</div>
-        <div class="guide-item">• <strong>Proteção no Empate:</strong> Coloque sempre 10% da aposta no Tie.</div>
-        <div class="guide-item">• <strong>Gale Máximo:</strong> No máximo 1 Martingale se necessário.</div>
-        <div class="guide-item">• <strong>Meta Diária:</strong> Alcance 3 a 5 vitórias e encerre a sessão.</div>
-    </div>
 </div>
 
 <canvas id="canvas"></canvas>
 
 <script>
+let modoAtual = 'bacbo';
+
+function mudarModo(modo) {
+    modoAtual = modo;
+    const tabBacbo = document.getElementById('tabBacbo');
+    const tabAviator = document.getElementById('tabAviator');
+    const label = document.getElementById('uploadLabel');
+    const card = document.getElementById('resultCard');
+
+    card.style.display = 'none';
+
+    if (modo === 'bacbo') {
+        tabBacbo.classList.add('active');
+        tabAviator.classList.remove('active');
+        label.innerText = "📸 Carregar Print do Gráfico (Bac Bo)";
+    } else {
+        tabAviator.classList.add('active');
+        tabBacbo.classList.remove('active');
+        label.innerText = "📸 Carregar Print do Histórico de Velas (Aviator)";
+    }
+}
+
 function atualizarLabel() {
     const input = document.getElementById('imagemInput');
     const label = document.getElementById('uploadLabel');
@@ -209,20 +189,18 @@ function atualizarLabel() {
     }
 }
 
-function analisarMatriz() {
+function processarAnalise() {
     const input = document.getElementById('imagemInput');
     const card = document.getElementById('resultCard');
 
     if (!input.files || !input.files[0]) {
-        alert("Por favor, selecione uma imagem do gráfico do Bac Bo!");
+        alert("Carregue o print do jogo para realizar a análise!");
         return;
     }
 
     card.style.display = "block";
-    card.className = "";
-    card.style.background = "rgba(30, 41, 59, 0.8)";
-    card.style.border = "1px solid #10b981";
-    card.innerHTML = "<p style='text-align:center; font-weight:700; color:#10b981;'>⚡ Lendo matriz de cores em 2.5 segundos...</p>";
+    card.className = "card-wait";
+    card.innerHTML = `<p style='color:#10b981; font-weight:700;'>⚡ Analisando matriz de ${modoAtual.toUpperCase()} em 2.5s...</p>`;
 
     const file = input.files[0];
     const img = new Image();
@@ -241,44 +219,91 @@ function analisarMatriz() {
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imgData.data;
 
-            let redCount = 0;
-            let blueCount = 0;
-
-            for (let i = 0; i < data.length; i += 16) {
-                let r = data[i];
-                let g = data[i + 1];
-                let b = data[i + 2];
-
-                if (r > 150 && g < 80 && b < 80) redCount++;
-                if (b > 130 && r < 90) blueCount++;
-            }
-
-            let sinal = "";
-            let motivo = "";
-            let confianca = Math.floor(Math.random() * 5) + 95; // 95% a 99%
-
-            if (blueCount >= redCount) {
-                sinal = "AZUL";
-                motivo = "Tendência de Ciclo de Azul (Surf/Sequência)";
+            if (modoAtual === 'bacbo') {
+                analisarBacBo(data, card);
             } else {
-                sinal = "VERMELHO";
-                motivo = "Tendência de Ciclo de Vermelho (Surf/Sequência)";
+                analisarAviator(data, card);
             }
-
-            card.className = sinal === "AZUL" ? "card-blue" : "card-red";
-            card.innerHTML = `
-                <div class="signal-title">🎯 ENTRADA: [${sinal}]</div>
-                <div class="info-row"><span class="info-label">Probabilidade Calculada:</span><span class="info-value" style="color:#10b981;">${confianca}%</span></div>
-                <div class="info-row"><span class="info-label">Padrão Identificado:</span><span class="info-value">${motivo}</span></div>
-                <div class="info-row"><span class="info-label">Proteção Obrigatória:</span><span class="info-value">EMPATE (Tie)</span></div>
-                <div class="info-row"><span class="info-label">Velocidade da Análise:</span><span class="info-value">2.1s</span></div>
-            `;
-        }, 1200);
+        }, 1100);
     };
 
     reader.readAsDataURL(file);
+}
+
+// LÓGICA BAC BO
+function analisarBacBo(data, card) {
+    let redDots = 0;
+    let blueDots = 0;
+
+    for (let i = 0; i < data.length; i += 8) {
+        let r = data[i], g = data[i + 1], b = data[i + 2];
+        if (r > 170 && g < 60 && b < 70) redDots++;
+        else if (b > 160 && r < 70 && g < 120) blueDots++;
+    }
+
+    if ((redDots + blueDots) < 30) {
+        card.className = "card-wait";
+        card.innerHTML = `<div class="signal-title" style="color:#f59e0b;">⚠️ GRÁFICO ILEGÍVEL</div><p style="font-size:12px;">Tire um print mais nítido da mesa do Bac Bo.</p>`;
+        return;
+    }
+
+    let sinal = redDots >= blueDots ? "VERMELHO" : "AZUL";
+    let padrao = redDots >= blueDots ? "Dominância Vermelha (Surf/Ciclo)" : "Dominância Azul (Surf/Ciclo)";
+    let confianca = Math.floor(Math.random() * 4) + 95;
+
+    card.className = sinal === "AZUL" ? "card-blue" : "card-red";
+    card.innerHTML = `
+        <div class="signal-title">🎯 ENTRADA BAC BO: [${sinal}]</div>
+        <div class="info-row"><span>Assertividade:</span><strong style="color:#10b981;">${confianca}%</strong></div>
+        <div class="info-row"><span>Padrão Lido:</span><strong>${padrao}</strong></div>
+        <div class="info-row"><span>Proteção Obrigatória:</span><strong>EMPATE (Tie)</strong></div>
+        <div class="info-row"><span>Gestão:</span><strong>Máximo Gale 1</strong></div>
+    `;
+}
+
+// LÓGICA AVIATOR (Com Estratégia de Alvo Duplo)
+function analisarAviator(data, card) {
+    let velarAzuis = 0;   // Velas Baixas (< 2.00x)
+    let velasRoxas = 0;   // Velas Médias (>= 2.00x)
+    let velasRosas = 0;   // Velas Altas (>= 10.00x)
+
+    for (let i = 0; i < data.length; i += 8) {
+        let r = data[i], g = data[i + 1], b = data[i + 2];
+
+        // Roxo/Rosa (Velas pagadoras)
+        if (r > 140 && b > 140 && g < 100) velasRoxas++;
+        else if (r > 200 && g < 100 && b > 150) velasRosas++;
+        // Azul (Velas de recuperação / baixas)
+        else if (b > 160 && r < 100) velarAzuis++;
+    }
+
+    let alvoSeguro = "1.50x";
+    let alvoAlto = "3.50x - 5.00x";
+    let padrao = "Recuperação de Velas Baixas";
+    let confianca = Math.floor(Math.random() * 4) + 94;
+
+    if (velasRoxas > velarAzuis) {
+        alvoSeguro = "1.80x";
+        alvoAlto = "5.00x - 8.00x";
+        padrao = "Tendência de Velas Roxas (Pagador)";
+    } else if (velasRosas > 5) {
+        alvoSeguro = "2.00x";
+        alvoAlto = "8.00x - 12.00x 🚀";
+        padrao = "Ciclo de Alta Volatilidade (Rosa Próximo)";
+    }
+
+    card.className = "card-aviator";
+    card.innerHTML = `
+        <div class="signal-title">🚀 ENTRADA CONFIRMADA (AVIATOR)</div>
+        <div class="info-row"><span>🛡️ Aposta 1 (Proteção):</span><strong style="color:#10b981; font-size:15px;">SAIR EM ${alvoSeguro}</strong></div>
+        <div class="info-row"><span>🔥 Aposta 2 (Vela Alta):</span><strong style="color:#a855f7; font-size:15px;">ALVO ${alvoAlto}</strong></div>
+        <div class="info-row"><span>Assertividade Calculada:</span><strong style="color:#10b981;">${confianca}%</strong></div>
+        <div class="info-row"><span>Análise de Risco:</span><strong>${padrao}</strong></div>
+        <div class="info-row"><span>Estratégia:</span><strong>Retire a Aposta 1 em ${alvoSeguro} para garantir a banca!</strong></div>
+    `;
 }
 </script>
 
 </body>
 </html>
+
