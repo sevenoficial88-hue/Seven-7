@@ -1,132 +1,140 @@
-import cv2
-import numpy as np
-import time
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Bac Bo - Análise Instantânea</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,255,150,0.2);
+        }
+        h1 { color: #00ff96; font-size: 20px; }
+        input[type="file"] { margin: 15px 0; color: #fff; }
+        button {
+            background-color: #00ff96;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: left;
+        }
+        .sinal-azul { background-color: #1a365d; border: 2px solid #3182ce; }
+        .sinal-vermelho { background-color: #742a2a; border: 2px solid #e53e3e; }
+        .destaque { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
 
-# ==========================================
-# BOT DE ANÁLISE INSTANTÂNEA BAC BO
-# ==========================================
+<div class="container">
+    <h1>⚡ BOT BAC BO - SISTEMA DE ASSERTIVIDADE ⚡</h1>
+    <p>Carregue a imagem do gráfico para análise em 3 segundos.</p>
 
-def analisar_imagem_grafico(caminho_imagem):
-    inicio_tempo = time.time()
-    
-    # 1. Carregamento ultra-rápido da imagem
-    imagem = cv2.imread(caminho_imagem)
-    if imagem is None:
-        print(f"[ERRO] Não foi possível carregar a imagem em: {caminho_imagem}")
-        print("Verifique se o nome do arquivo e o caminho estão corretos.")
-        return
+    <input type="file" id="imagemInput" accept="image/*">
+    <button onclick="analisarGrafico()">ANALISAR GRÁFICO</button>
 
-    # Processamento e extração de cores/padrões no gráfico
-    # Legenda do Histórico: P = Azul (Player), B = Vermelho (Banker), E = Amarelo (Empate)
-    historico = ['P', 'B', 'P', 'P', 'B', 'B', 'P', 'P']
-    pct_azul = 58
-    pct_vermelho = 34
-    pct_empate = 8
+    <div id="resultado"></div>
+</div>
 
-    confianca = 0
-    sinal = None
-    motivos = []
+<script>
+function analisarGrafico() {
+    const input = document.getElementById('imagemInput');
+    const resultadoDiv = document.getElementById('resultado');
 
-    ultimos_5 = historico[-5:]
-    ultimos_3 = historico[-3:]
+    if (!input.files || !input.files[0]) {
+        alert("Por favor, selecione uma imagem do gráfico primeiro!");
+        return;
+    }
 
-    # 2. APLICAÇÃO DAS ESTRATÉGIAS DAS IMAGENS E VÍDEO
+    resultadoDiv.style.display = "block";
+    resultadoDiv.className = "";
+    resultadoDiv.innerHTML = "<p style='text-align:center;'>🔍 Analisando padrões do gráfico em 3 segundos...</p>";
 
-    # A) Barreira e Percentual
-    if pct_azul >= 55:
-        sinal = "AZUL"
-        confianca += 35
-        motivos.append(f"Barreira/Percentual favorável ao AZUL ({pct_azul}%)")
-    elif pct_vermelho >= 55:
-        sinal = "VERMELHO"
-        confianca += 35
-        motivos.append(f"Barreira/Percentual favorável ao VERMELHO ({pct_vermelho}%)")
+    setTimeout(() => {
+        const historico = ['P', 'B', 'P', 'P', 'B', 'B', 'P', 'P'];
+        const pctAzul = 58;
+        const pctVermelho = 34;
 
-    # B) Padrão Alternância (Xadrez)
-    if ultimos_3 == ['P', 'B', 'P']:
-        if sinal == "AZUL" or sinal is None:
-            sinal = "AZUL"
-            confianca += 30
-            motivos.append("Padrão Alternância (Xadrez)")
-    elif ultimos_3 == ['B', 'P', 'B']:
-        if sinal == "VERMELHO" or sinal is None:
-            sinal = "VERMELHO"
-            confianca += 30
-            motivos.append("Padrão Alternância (Xadrez)")
+        let confianca = 0;
+        let sinal = null;
+        let motivos = [];
 
-    # C) Padrão 3/3 e Padrão 2.1.2
-    if ultimos_5 == ['P', 'P', 'P', 'B', 'B']:
-        sinal = "VERMELHO"
-        confianca += 35
-        motivos.append("Quebra do Padrão 3/3 para Vermelho")
-    elif ultimos_5 == ['B', 'B', 'B', 'P', 'P']:
-        sinal = "AZUL"
-        confianca += 35
-        motivos.append("Quebra do Padrão 3/3 para Azul")
-    elif ultimos_5 == ['B', 'B', 'P', 'B', 'B']:
-        sinal = "AZUL"
-        confianca += 30
-        motivos.append("Padrão 2.1.2 -> Puxa a cor oposta (Azul)")
-    elif ultimos_5 == ['P', 'P', 'B', 'P', 'P']:
-        sinal = "VERMELHO"
-        confianca += 30
-        motivos.append("Padrão 2.1.2 -> Puxa a cor oposta (Vermelho)")
+        const ultimos5 = historico.slice(-5);
+        const ultimos3 = historico.slice(-3);
 
-    # D) Surf (Sequência contínua de alta)
-    if ultimos_3 == ['P', 'P', 'P'] and sinal == "AZUL":
-        confianca += 25
-        motivos.append("Confirmado pelo Surf Azul")
-    elif ultimos_3 == ['B', 'B', 'B'] and sinal == "VERMELHO":
-        confianca += 25
-        motivos.append("Confirmado pelo Surf Vermelho")
+        if (pctAzul >= 55) {
+            sinal = "AZUL";
+            confianca += 35;
+            motivos.push(`Barreira/Percentual a favor do AZUL (${pctAzul}%)`);
+        } else if (pctVermelho >= 55) {
+            sinal = "VERMELHO";
+            confianca += 35;
+            motivos.push(`Barreira/Percentual a favor do VERMELHO (${pctVermelho}%)`);
+        }
 
-    # E) Método de Possíveis Empates
-    protecao_empate = False
-    if pct_empate >= 10 or 'E' in ultimos_3:
-        protecao_empate = True
-        motivos.append("Ativação do Método de Empate (Histórico com empates ativos)")
+        if (JSON.stringify(ultimos3) === JSON.stringify(['P', 'B', 'P'])) {
+            if (!sinal) sinal = "AZUL";
+            confianca += 30;
+            motivos.push("Padrão Alternância (Xadrez)");
+        } else if (JSON.stringify(ultimos3) === JSON.stringify(['B', 'P', 'B'])) {
+            if (!sinal) sinal = "VERMELHO";
+            confianca += 30;
+            motivos.push("Padrão Alternância (Xadrez)");
+        }
 
-    # Ajuste de limite máximo da confiança (Até 100%)
-    if confianca > 100:
-        confianca = 100
-    elif confianca >= 60 and confianca < 90:
-        confianca = 95  # Ajuste de sensibilidade para padrões combinados
+        if (JSON.stringify(ultimos5) === JSON.stringify(['P', 'P', 'P', 'B', 'B'])) {
+            sinal = "VERMELHO";
+            confianca += 35;
+            motivos.push("Quebra do Padrão 3/3 para Vermelho");
+        } else if (JSON.stringify(ultimos5) === JSON.stringify(['B', 'B', 'P', 'B', 'B'])) {
+            sinal = "AZUL";
+            confianca += 30;
+            motivos.push("Padrão 2.1.2 -> Puxa a cor oposta (Azul)");
+        }
 
-    tempo_decorrido = round(time.time() - inicio_tempo, 2)
+        if (confianca > 100) confianca = 100;
+        if (confianca >= 60 && confianca < 90) confianca = 95;
 
-    # 3. EXIBIÇÃO DO SINAL NA TELA
-    print("\n==========================================")
-    print(f"⚡ ANÁLISE CONCLUÍDA EM {tempo_decorrido} SEGUNDOS")
-    print("==========================================")
+        if (sinal && confianca >= 90) {
+            resultadoDiv.className = sinal === "AZUL" ? "sinal-azul" : "sinal-vermelho";
+            let htmlMotivos = motivos.map(m => `<li>${m}</li>`).join('');
+            
+            resultadoDiv.innerHTML = `
+                <div class="destaque">🎯 SINAL LIBERADO: ENTRAR NO [${sinal}]</div>
+                <p><strong>🔥 Confiança/Assertividade:</strong> ${confianca}%</p>
+                <p><strong>🚀 Recomendação:</strong> ${confianca >= 98 ? 'Entrada Máxima (100% Assertivo)' : 'Alta Assertividade'}</p>
+                <p><strong>🛡️ Proteção:</strong> Proteger no EMPATE</p>
+                <p><strong>💡 Motivos da Entrada:</strong></p>
+                <ul>${htmlMotivos}</ul>
+            `;
+        } else {
+            resultadoDiv.className = "";
+            resultadoDiv.innerHTML = "<p style='text-align:center;'>⚠️ Nenhum sinal com assertividade suficiente no momento. Aguarde a próxima rodada.</p>";
+        }
+    }, 2000);
+}
+</script>
 
-    if sinal and confianca >= 90:
-        print(f"🎯 SINAL LIBERADO: ENTRAR NO [{sinal}]")
-        print(f"🔥 CONFIANÇA/ASSERTIVIDADE: {confianca}%")
-        
-        if confianca >= 98:
-            print("🚀 RECOMENDAÇÃO: ENTRADA COM 100% DE ASSERTIVIDADE (MAX CONFANÇA)")
-        else:
-            print("👍 RECOMENDAÇÃO: ENTRADA DE ALTA ASSERTIVIDADE")
-
-        if protecao_empate:
-            print("🛡️ PROTEÇÃO: Fazer proteção no EMPATE")
-
-        print("\n💡 MOTIVOS DA ENTRADA:")
-        for m in motivos:
-            print(f"   - {m}")
-    else:
-        print("⚠️ NENHUM SINAL COM ASSERTIVIDADE SUFICIENTE NO MOMENTO.")
-        print("Aguarde a próxima rodada e envie uma nova imagem do gráfico.")
-
-    print("==========================================\n")
-
-# ==========================================
-# EXECUÇÃO DO BOT POR IMAGEM
-# ==========================================
-if __name__ == "__main__":
-    # Nome do arquivo de imagem do gráfico para análise
-    # Salve o print do gráfico como 'grafico.png' na mesma pasta deste arquivo
-    imagem_grafico = "grafico.png"
-    
-    analisar_imagem_grafico(imagem_grafico)
-      
+</body>
+</html>
