@@ -1,309 +1,370 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEVEN-7 QUANTUM AI | BAC BO & AVIATOR PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background: #030712;
-            color: #f3f4f6;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-        .bg-glow {
-            position: fixed;
-            top: -20%;
-            left: -20%;
-            width: 140%;
-            height: 140%;
-            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, rgba(3, 7, 18, 0.95) 70%);
-            z-index: 0;
-            pointer-events: none;
-        }
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 450px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 0 35px rgba(16, 185, 129, 0.2);
-        }
-        .header { text-align: center; margin-bottom: 15px; }
-        .title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            font-weight: 900;
-            background: linear-gradient(90deg, #10b981, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        /* Mode Switcher Tabs */
-        .tab-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: rgba(30, 41, 59, 0.6);
-            padding: 5px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            background: transparent;
-            color: #9ca3af;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .tab-btn.active {
-            background: #10b981;
-            color: #000;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-        }
-        .upload-area {
-            border: 2px dashed rgba(16, 185, 129, 0.4);
-            border-radius: 14px;
-            padding: 20px;
-            text-align: center;
-            background: rgba(30, 41, 59, 0.5);
-            cursor: pointer;
-            margin-bottom: 15px;
-            transition: 0.3s;
-        }
-        .upload-area:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
-        input[type="file"] { display: none; }
-        .btn-analyze {
-            width: 100%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #000;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 15px;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-        #resultCard {
-            display: none;
-            margin-top: 20px;
-            border-radius: 14px;
-            padding: 18px;
-            animation: fadeIn 0.3s ease;
-        }
-        .card-blue { background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(15, 23, 42, 0.95)); border: 2px solid #3b82f6; }
-        .card-red { background: linear-gradient(135deg, rgba(127, 29, 29, 0.95), rgba(15, 23, 42, 0.95)); border: 2px solid #ef4444; }
-        .card-aviator { background: linear-gradient(135deg, rgba(88, 28, 135, 0.95), rgba(15, 23, 42, 0.95)); border: 2px solid #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-        .card-wait { background: rgba(55, 65, 81, 0.9); border: 1px solid #9ca3af; text-align: center; }
-        .signal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 12px;
-        }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 6px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        canvas { display: none; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-</head>
-<body>
-
-<div class="bg-glow"></div>
-
-<div class="container">
-    <div class="header">
-        <div class="title">SEVEN-7 QUANTUM AI</div>
-    </div>
-
-    <!-- Abas de Seleção de Jogo -->
-    <div class="tab-container">
-        <button class="tab-btn active" id="tabBacbo" onclick="mudarModo('bacbo')">🎲 BAC BO</button>
-        <button class="tab-btn" id="tabAviator" onclick="mudarModo('aviator')">✈️ AVIATOR</button>
-    </div>
-
-    <label for="imagemInput" class="upload-area">
-        <div id="uploadLabel">📸 Carregar Print do Gráfico (Bac Bo)</div>
-    </label>
-    <input type="file" id="imagemInput" accept="image/*" onchange="atualizarLabel()">
-
-    <button class="btn-analyze" onclick="processarAnalise()">ANALISAR PADRÃO</button>
-
-    <div id="resultCard"></div>
-</div>
-
-<canvas id="canvas"></canvas>
-
-<script>
-let modoAtual = 'bacbo';
-
-function mudarModo(modo) {
-    modoAtual = modo;
-    const tabBacbo = document.getElementById('tabBacbo');
-    const tabAviator = document.getElementById('tabAviator');
-    const label = document.getElementById('uploadLabel');
-    const card = document.getElementById('resultCard');
-
-    card.style.display = 'none';
-
-    if (modo === 'bacbo') {
-        tabBacbo.classList.add('active');
-        tabAviator.classList.remove('active');
-        label.innerText = "📸 Carregar Print do Gráfico (Bac Bo)";
-    } else {
-        tabAviator.classList.add('active');
-        tabBacbo.classList.remove('active');
-        label.innerText = "📸 Carregar Print do Histórico de Velas (Aviator)";
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Last Value: B\n",
+      "Predicted: B\n",
+      "GState Green\n",
+      "Analyzing behaviors\n"
+     ]
     }
+   ],
+   "source": [
+    "import time\n",
+    "from datetime import datetime\n",
+    "import numpy as np\n",
+    "import pyautogui\n",
+    "import os\n",
+    "import threading\n",
+    "import pyttsx3\n",
+    "\n",
+    "os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Hide TensorFlow warnings\n",
+    "from msedge.selenium_tools import Edge, EdgeOptions\n",
+    "from selenium.webdriver.common.by import By\n",
+    "from selenium.webdriver.support.ui import WebDriverWait\n",
+    "from selenium.webdriver.support import expected_conditions as EC\n",
+    "from sklearn.preprocessing import LabelEncoder\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from webdriver_manager.microsoft import EdgeChromiumDriverManager\n",
+    "from IPython.display import clear_output\n",
+    "load_time = datetime.now()\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "import pyttsx3\n",
+    "g1=0\n",
+    "g2=0\n",
+    "g0=0\n",
+    "red=0\n",
+    "pstate = \"Green\"\n",
+    "pletra = None\n",
+    "def refresh_page(driver):\n",
+    "    while True:\n",
+    "        time.sleep(16000)  # Wait for 20 minutes\n",
+    "        pyautogui.press('f5')\n",
+    "        time.sleep(20)\n",
+    "        clear_output()\n",
+    "        print('Page refreshed')\n",
+    "edge_options = EdgeOptions()\n",
+    "    # Add any additional options if needed\n",
+    "\n",
+    "    # Set up the WebDriver with Microsoft Edge and the specified executable path\n",
+    "driver = Edge(executable_path=r'C:\\dev\\python\\scraping\\msedgedriver', options=edge_options)   \n",
+    " # Access the URL\n",
+    "driver.get('https://www.segurobet.com/cassino/slots/28/evolution/34940-420012128-bac-bo?mode=real&provider=all')\n",
+    "\n",
+    "# Wait for the site to load completely\n",
+    "wait = WebDriverWait(driver, 20)\n",
+    "print('Site loaded')\n",
+    "\n",
+    "# Fill the username and password inputs on the main page\n",
+    "username_input = wait.until(EC.presence_of_element_located((By.ID, 'username')))\n",
+    "password_input = wait.until(EC.presence_of_element_located((By.ID, 'password')))\n",
+    "username_input.send_keys('marlonfantinel@gmail.com')\n",
+    "password_input.send_keys('Php2021*')\n",
+    "\n",
+    "# Press the submit button\n",
+    "submit_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[type=\"submit\"]')))\n",
+    "submit_button.click()     \n",
+    "\n",
+    "wait = WebDriverWait(driver, 10)\n",
+    "\n",
+    "def main_code():\n",
+    "    global g1, g2, g0, red,load_time,pstate,pletra,driver \n",
+    "    clear_output()\n",
+    "\n",
+    "    # Set up the EdgeOptions\n",
+    "    \n",
+    "\n",
+    "   \n",
+    "\n",
+    "    # Define a recursive function to search for the \"gameFrame\"\n",
+    "    def find_game_frame(driver):\n",
+    "        # Check if the current iframe contains the \"gameFrame\"\n",
+    "        try:\n",
+    "            game_frame = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class=\"games-container\"]//iframe')))\n",
+    "            print('Game frame found')\n",
+    "            return game_frame\n",
+    "        except:\n",
+    "            pass\n",
+    "\n",
+    "        # Check if there are any child iframes\n",
+    "        child_iframes = driver.find_elements(By.TAG_NAME, 'iframe')\n",
+    "        for iframe in child_iframes:\n",
+    "            driver.switch_to.frame(iframe)\n",
+    "            found_frame = find_game_frame(driver)\n",
+    "            if found_frame:\n",
+    "                return found_frame\n",
+    "            driver.switch_to.parent_frame()\n",
+    "\n",
+    "        return None\n",
+    "\n",
+    "    # Wait for the \"gameFrame\" to be present within all levels of iframes\n",
+    "    game_frame = wait.until(lambda driver: find_game_frame(driver))\n",
+    "    driver.switch_to.frame(game_frame)\n",
+    "\n",
+    "    # Delay for additional time (if needed) to ensure all elements within the \"gameFrame\" are loaded\n",
+    "    time.sleep(20)  # Adjust the delay as needed\n",
+    "\n",
+    "    # Create an empty array to store the values\n",
+    "    text_values = []\n",
+    "\n",
+    "    # Initialize flag to track div creation\n",
+    "    div_created = False\n",
+    "    # Initialize variables\n",
+    "    \n",
+    "    \n",
+    "\n",
+    "    # Continuously check for the creation of divs with class beginning with \"gameResultWrapper\"\n",
+    "    print('Initializing engine')\n",
+    "    while True:\n",
+    "        # Check if the div with attribute \"data-role\" equal to \"game-desktop-overlay\" exists\n",
+    "\n",
+    "        current_time = datetime.now()\n",
+    "        total_signals=g0+g1+g2+red\n",
+    "        time_diff = (current_time - load_time).total_seconds()\n",
+    "        if time_diff >= 3600:\n",
+    "            #Show the results\n",
+    "            # Update the load time to the current time\n",
+    "            print('Total Signals:',total_signals)\n",
+    "            dcerto=g0+g1+g2\n",
+    "            print('Gale 0:',g0)\n",
+    "            print('Gale 1:',g1)\n",
+    "            print('Gale 2:',g2)\n",
+    "            print('Reds:',red)\n",
+    "            load_time = current_time\n",
+    "            acuracia=(dcerto/total_signals)*100\n",
+    "            facuracy=\"{0:0,.0f}%\".format(acuracia)\n",
+    "            print('Acuracia:',facuracy)\n",
+    "\n",
+    "        game_overlay_div = driver.find_elements(By.CSS_SELECTOR, '[data-role=\"game-desktop-overlay\"]')\n",
+    "        if game_overlay_div:\n",
+    "            # Check if a new div with class beginning with \"gameResultWrapper\" is created\n",
+    "            game_result_divs = driver.find_elements(By.XPATH, '//*[starts-with(@class, \"gameResultWrapper\")]')\n",
+    "            if len(game_result_divs) > 0 and not div_created:\n",
+    "                div_created = True  # Set flag to indicate div creation\n",
+    "                # Perform necessary actions here (e.g., trigger loop, process data, etc.)\n",
+    "                # Get the current datetime\n",
+    "                clear_output()\n",
+    "                current_datetime = datetime.now()\n",
+    "\n",
+    "                # Print the class and value of text elements with class starting with \"derivedRoadsText\"\n",
+    "                text_elements = driver.find_elements(By.XPATH, '//*[starts-with(@class, \"derivedRoadsText\")]')\n",
+    "                last_value = None  # Variable to store the last value\n",
+    "                for element in text_elements:\n",
+    "                    value = element.text\n",
+    "                    text_values.append(value)\n",
+    "                      # Update the last value\n",
+    "\n",
+    "                # Convert the text values into a numpy array\n",
+    "                data = np.array(text_values[-25:])\n",
+    "                last_value=last_value=text_values[-1]  # Use only the last 20 values\n",
+    "                if text_values[-1]==\"2\" or text_values[-1]==\"3\":\n",
+    "                    last_value=text_values[-2]\n",
+    "                elif text_values[-2]==\"2\" or text_values[-2]==\"3\":\n",
+    "                    last_value=text_values[-3]        \n",
+    "                # Preprocess the data\n",
+    "                label_encoder = LabelEncoder()\n",
+    "                encoded_data = label_encoder.fit_transform(data)\n",
+    "\n",
+    "                # Prepare the training data\n",
+    "                sequence_length = 12  # Length of the input sequence\n",
+    "                X = []\n",
+    "                y = []\n",
+    "                for i in range(len(encoded_data) - sequence_length):\n",
+    "                    sequence = encoded_data[i:i + sequence_length]\n",
+    "                    target = encoded_data[i + sequence_length]\n",
+    "                    X.append(sequence)\n",
+    "                    y.append(target)\n",
+    "                X = np.array(X)\n",
+    "                y = np.array(y)\n",
+    "\n",
+    "                # Split the data into training and testing sets\n",
+    "                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+    "\n",
+    "                # Train a random forest classifier\n",
+    "                model = RandomForestClassifier()\n",
+    "                model.fit(X_train, y_train)\n",
+    "\n",
+    "                # Evaluate the model\n",
+    "                accuracy = model.score(X_test, y_test)\n",
+    "\n",
+    "                # Predict the next value\n",
+    "                last_sequence = encoded_data[-sequence_length:].reshape(1, -1)\n",
+    "                next_value_encoded = model.predict(last_sequence)\n",
+    "                next_value = label_encoder.inverse_transform(next_value_encoded)[0]\n",
+    "\n",
+    "                # Print the last value before checking accuracy and predicting next value\n",
+    "                print(\"Last Value:\", last_value)\n",
+    "                print(\"Predicted:\",pletra)\n",
+    "                print('GState',pstate)\n",
+    "                try:\n",
+    "                    button_element = driver.find_element(By.CSS_SELECTOR, 'button[data-role=\"button\"]')\n",
+    "                    button_element.click()  # Click on the button\n",
+    "                except:\n",
+    "                    pass    \n",
+    "                # Conditionals\n",
+    "                # First attempt\n",
+    "                if pstate==\"Green\" or  pstate==\"Red\":\n",
+    "                    if accuracy >= 0.6:\n",
+    "                        if next_value == 'B':\n",
+    "                            proxima = 'Vermelho'\n",
+    "                        else:\n",
+    "                            proxima = 'Azul'\n",
+    "                        now = datetime.now()\n",
+    "                        formatted_date = now.strftime(\"%d-%m-%Y %H:%M:%S\")\n",
+    "                        pletra = next_value\n",
+    "                        print('Result at:', formatted_date)\n",
+    "                        print(\"Predicted Next Value:\", proxima, \"| Accuracy:\", accuracy)\n",
+    "                        pstate = \"\"\n",
+    "                        engine = pyttsx3.init()\n",
+    "                        engine.runAndWait()\n",
+    "                    else:\n",
+    "                      print(\"Analyzing behaviors\")\n",
+    "\n",
+    "                if (last_value==\"T\" or pletra == last_value) and pstate == \"\":\n",
+    "                    print(\"Win without Martin Gale\")\n",
+    "                    pstate = \"Green\"\n",
+    "                    g0=g0+1\n",
+    "                    # Print the predicted next value if accuracy is equal to or higher than 0.6\n",
+    "                    if accuracy >= 0.6:\n",
+    "                        if next_value == 'B':\n",
+    "                            proxima = 'Vermelho'\n",
+    "                        else:\n",
+    "                            proxima = 'Azul'\n",
+    "                        now = datetime.now()\n",
+    "                        formatted_date = now.strftime(\"%d-%m-%Y %H:%M:%S\")\n",
+    "                        pletra = next_value\n",
+    "                        print('Result at:', formatted_date)\n",
+    "                        print(\"Predicted Next Value:\", proxima, \"| Accuracy:\", accuracy)\n",
+    "                        pstate = \"\"\n",
+    "                        engine = pyttsx3.init()\n",
+    "                        engine.runAndWait()\n",
+    "                    else:\n",
+    "                        print(\"Analyzing behaviors\")\n",
+    "                # NOK on first attempt         \n",
+    "                elif (last_value!=\"T\" or pletra != last_value) and pstate == \"\":\n",
+    "                    print('Go gale 1')\n",
+    "                    pstate = \"g1\"\n",
+    "                # OK on second attempt    \n",
+    "                elif (last_value==\"T\" or pletra == last_value) and pstate == \"g1\":\n",
+    "                    print(\"Win Martin Gale 1\")\n",
+    "                    pstate = \"Green\"\n",
+    "                    g1=g1+1\n",
+    "                    # Print the predicted next value if accuracy is equal to or higher than 0.6\n",
+    "                    if accuracy >= 0.6:\n",
+    "                        if next_value == 'B':\n",
+    "                            proxima = 'Vermelho'\n",
+    "                        else:\n",
+    "                            proxima = 'Azul'\n",
+    "                        now = datetime.now()\n",
+    "                        formatted_date = now.strftime(\"%d-%m-%Y %H:%M:%S\")\n",
+    "                        pletra = next_value\n",
+    "                        print('Result at:', formatted_date)\n",
+    "                        print(\"Predicted Next Value:\", proxima, \"| Accuracy:\", accuracy)\n",
+    "                        pstate = \"\"\n",
+    "                        engine = pyttsx3.init()\n",
+    "                        engine.runAndWait()\n",
+    "                    else:\n",
+    "                        print(\"Analyzing behaviors\")\n",
+    "                elif (last_value!=\"T\" or pletra != last_value) and pstate == \"g1\":  \n",
+    "                    print('Go gale 2')\n",
+    "                    pstate = \"g2\"\n",
+    "                elif (last_value==\"T\" or pletra == last_value) and pstate == \"g2\":\n",
+    "                    print(\"Win Martin Gale 2\")\n",
+    "                    pstate = \"Green\"\n",
+    "                    g2=g2+1\n",
+    "                    # Print the predicted next value if accuracy is equal to or higher than 0.6\n",
+    "                    if accuracy >= 0.6:\n",
+    "                        if next_value == 'B':\n",
+    "                            proxima = 'Vermelho'\n",
+    "                        else:\n",
+    "                            proxima = 'Azul'\n",
+    "                        now = datetime.now()\n",
+    "                        formatted_date = now.strftime(\"%d-%m-%Y %H:%M:%S\")\n",
+    "                        pletra = next_value\n",
+    "                        print('Result at:', formatted_date)\n",
+    "                        print(\"Predicted Next Value:\", proxima, \"| Accuracy:\", accuracy)\n",
+    "                        pstate = \"\"\n",
+    "                        engine = pyttsx3.init()\n",
+    "                        engine.runAndWait()\n",
+    "                    else:\n",
+    "                        print(\"Analyzing behaviors\")\n",
+    "                elif (pletra!=\"T\" or pletra != last_value) and pstate == \"g2\":  \n",
+    "                    print('Red')\n",
+    "                    pstate = 'Red'                  \n",
+    "                    red =red+1\n",
+    "                # Clear the text values array for the next iteration\n",
+    "                text_values.clear()\n",
+    "\n",
+    "            elif len(game_result_divs) == 0:\n",
+    "                div_created = False  # Reset flag if no divs are found\n",
+    "\n",
+    "        # Wait for 2 seconds before checking again\n",
+    "        time.sleep(2)\n",
+    "\n",
+    "    # Switch back to the default content\n",
+    "    driver.switch_to.default_content()\n",
+    "\n",
+    "    # Close the WebDriver\n",
+    "    driver.quit()\n",
+    "\n",
+    "# Start the refresh timer before executing the main code\n",
+    "refresh_thread = threading.Thread(target=refresh_page, args=(driver,))\n",
+    "refresh_thread.start()\n",
+    "\n",
+    "# Execute the main code\n",
+    "while True:\n",
+    "    try:\n",
+    "      main_code()\n",
+    "    except:\n",
+    "      driver.quit()\n",
+    "      break  "
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.7"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
 }
-
-function atualizarLabel() {
-    const input = document.getElementById('imagemInput');
-    const label = document.getElementById('uploadLabel');
-    if (input.files && input.files[0]) {
-        label.innerText = "📁 " + input.files[0].name;
-    }
-}
-
-function processarAnalise() {
-    const input = document.getElementById('imagemInput');
-    const card = document.getElementById('resultCard');
-
-    if (!input.files || !input.files[0]) {
-        alert("Carregue o print do jogo para realizar a análise!");
-        return;
-    }
-
-    card.style.display = "block";
-    card.className = "card-wait";
-    card.innerHTML = `<p style='color:#10b981; font-weight:700;'>⚡ Analisando matriz de ${modoAtual.toUpperCase()} em 2.5s...</p>`;
-
-    const file = input.files[0];
-    const img = new Image();
-    const reader = new FileReader();
-
-    reader.onload = function(e) { img.src = e.target.result; };
-
-    img.onload = function() {
-        setTimeout(() => {
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imgData.data;
-
-            if (modoAtual === 'bacbo') {
-                analisarBacBo(data, card);
-            } else {
-                analisarAviator(data, card);
-            }
-        }, 1100);
-    };
-
-    reader.readAsDataURL(file);
-}
-
-// LÓGICA BAC BO
-function analisarBacBo(data, card) {
-    let redDots = 0;
-    let blueDots = 0;
-
-    for (let i = 0; i < data.length; i += 8) {
-        let r = data[i], g = data[i + 1], b = data[i + 2];
-        if (r > 170 && g < 60 && b < 70) redDots++;
-        else if (b > 160 && r < 70 && g < 120) blueDots++;
-    }
-
-    if ((redDots + blueDots) < 30) {
-        card.className = "card-wait";
-        card.innerHTML = `<div class="signal-title" style="color:#f59e0b;">⚠️ GRÁFICO ILEGÍVEL</div><p style="font-size:12px;">Tire um print mais nítido da mesa do Bac Bo.</p>`;
-        return;
-    }
-
-    let sinal = redDots >= blueDots ? "VERMELHO" : "AZUL";
-    let padrao = redDots >= blueDots ? "Dominância Vermelha (Surf/Ciclo)" : "Dominância Azul (Surf/Ciclo)";
-    let confianca = Math.floor(Math.random() * 4) + 95;
-
-    card.className = sinal === "AZUL" ? "card-blue" : "card-red";
-    card.innerHTML = `
-        <div class="signal-title">🎯 ENTRADA BAC BO: [${sinal}]</div>
-        <div class="info-row"><span>Assertividade:</span><strong style="color:#10b981;">${confianca}%</strong></div>
-        <div class="info-row"><span>Padrão Lido:</span><strong>${padrao}</strong></div>
-        <div class="info-row"><span>Proteção Obrigatória:</span><strong>EMPATE (Tie)</strong></div>
-        <div class="info-row"><span>Gestão:</span><strong>Máximo Gale 1</strong></div>
-    `;
-}
-
-// LÓGICA AVIATOR (Com Estratégia de Alvo Duplo)
-function analisarAviator(data, card) {
-    let velarAzuis = 0;   // Velas Baixas (< 2.00x)
-    let velasRoxas = 0;   // Velas Médias (>= 2.00x)
-    let velasRosas = 0;   // Velas Altas (>= 10.00x)
-
-    for (let i = 0; i < data.length; i += 8) {
-        let r = data[i], g = data[i + 1], b = data[i + 2];
-
-        // Roxo/Rosa (Velas pagadoras)
-        if (r > 140 && b > 140 && g < 100) velasRoxas++;
-        else if (r > 200 && g < 100 && b > 150) velasRosas++;
-        // Azul (Velas de recuperação / baixas)
-        else if (b > 160 && r < 100) velarAzuis++;
-    }
-
-    let alvoSeguro = "1.50x";
-    let alvoAlto = "3.50x - 5.00x";
-    let padrao = "Recuperação de Velas Baixas";
-    let confianca = Math.floor(Math.random() * 4) + 94;
-
-    if (velasRoxas > velarAzuis) {
-        alvoSeguro = "1.80x";
-        alvoAlto = "5.00x - 8.00x";
-        padrao = "Tendência de Velas Roxas (Pagador)";
-    } else if (velasRosas > 5) {
-        alvoSeguro = "2.00x";
-        alvoAlto = "8.00x - 12.00x 🚀";
-        padrao = "Ciclo de Alta Volatilidade (Rosa Próximo)";
-    }
-
-    card.className = "card-aviator";
-    card.innerHTML = `
-        <div class="signal-title">🚀 ENTRADA CONFIRMADA (AVIATOR)</div>
-        <div class="info-row"><span>🛡️ Aposta 1 (Proteção):</span><strong style="color:#10b981; font-size:15px;">SAIR EM ${alvoSeguro}</strong></div>
-        <div class="info-row"><span>🔥 Aposta 2 (Vela Alta):</span><strong style="color:#a855f7; font-size:15px;">ALVO ${alvoAlto}</strong></div>
-        <div class="info-row"><span>Assertividade Calculada:</span><strong style="color:#10b981;">${confianca}%</strong></div>
-        <div class="info-row"><span>Análise de Risco:</span><strong>${padrao}</strong></div>
-        <div class="info-row"><span>Estratégia:</span><strong>Retire a Aposta 1 em ${alvoSeguro} para garantir a banca!</strong></div>
-    `;
-}
-</script>
-
-</body>
-</html>
-
